@@ -1,10 +1,17 @@
 #! /bin/bash
 set -eux
 
-docker build -t tapstream/openresty-bundle-deb .
+OPENRESTY_VERSION=1.9.7.2
+OPENRESTY_VERSION_ID="${OPENRESTY_VERSION}-custom1"
+
+docker build -t tapstream/openresty-bundle-deb \
+             --build-arg OPENRESTY_VERSION=$OPENRESTY_VERSION \
+             --build-arg OPENRESTY_VERSION_ID=$OPENRESTY_VERSION_ID \
+             .
+
 CONTAINER=$(docker create tapstream/openresty-bundle-deb)
 if [ ! -d ./artifacts ]; then
     mkdir ./artifacts
 fi
-docker cp $CONTAINER:/build/openresty_1.9.3.1-tapstream1_amd64.deb ./artifacts/
+docker cp $CONTAINER:/build/openresty_${OPENRESTY_VERSION_ID}_amd64.deb ./artifacts/
 docker rm $CONTAINER
